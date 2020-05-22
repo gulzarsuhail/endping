@@ -1,4 +1,4 @@
-const PORT = 3001;
+const PORT = 3002;
 require("dotenv").config();
 
 const express = require('express');
@@ -17,6 +17,7 @@ app.use (cors());
 // set up route handlers
 app.use("/api/auth", routes.auth);
 
+
 // handle 404
 app.use ((req, res, next) => {
     const err = new Error('Invalid endpoint');
@@ -26,8 +27,9 @@ app.use ((req, res, next) => {
 
 // handle errors
 app.use ((err, req, res, next) => {
+    console.log(err.stack)
     const statusCode = err.status || 500;
-    res.status(statusCode).json({error: err.toString()});
+    res.status(statusCode).json({error: err.message});
 });
 
 

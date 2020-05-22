@@ -5,13 +5,9 @@ const textsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    from: {
+    chat: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users'
-    },
-    to: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users'
+        ref: "Chats"
     },
     time: {
         type: Date,

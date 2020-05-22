@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const auth = require('../handlers/auth');
+const authHandler = require('../handlers/auth');
 
-router.post("/", auth.newSignup);
+router.get("/signup/:username", authHandler.checkIfUsernameAvailable);
 
-router.get("/login/:username", auth.login);
+router.post("/signup", authHandler.newSignup);
 
-router.post("/login", auth.verifyLogin);
+router.get("/login/:username", function(req,res,next){console.log('here');next()}, authHandler.login);
+
+router.post("/login", authHandler.verifyLogin);
 
 module.exports = router;

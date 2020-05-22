@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema({
     pubKey: {
         type: String,
         required: true,
-        minlength: 750,
-        maxlength: 850,
+        minlength: 450,
+        maxlength: 450,
         unique: true,
     },
     contacts: [

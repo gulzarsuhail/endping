@@ -1,9 +1,41 @@
-const crypto = require("crypto");
 const mongoose = require('mongoose');
-const jwt = require("jsonwebtoken");
-const fs = require('fs'); 
-const { publicEncrypt, publicDecrypt } = require('crypto');
-const { Users, LoginChallenges } =  require('../models');
+const jwt = require('jsonwebtoken');
+const { publicEncrypt, publicDecrypt, randomBytes } = require('crypto');
+
+const { 
+    publicEncryptUsingDummyKey, 
+    publicEncryptServerPublicKey, 
+    publicDecryptUsingKey, 
+    publicEncryptUsingKey 
+} = require("../helpers/encrypt");
+
+const { Users, LoginChallenges } = require('../models');
+
+/*
+    @required params:
+        JSON body:
+            username: new user's username
+    @return params:
+        if success: {available: true}
+        if fail: {availabe: false}
+*/
+module.exports.checkIfUsernameAvailable = async (req, res, next) => {
+    try {
+        const username = req.params.username;
+        const dbQuery = await Users.findOne({username});
+        if (!dbQuery) {
+            return res.json({
+                available: !(dbQuery)
+            });
+        } else {
+            const err = new Error ("Username already taken");
+            err.status = 400;
+            throw err;
+        }
+    } catch (err) {
+        next(err);
+    }
+}
 
 /*
     @required params:
@@ -16,17 +48,21 @@ const { Users, LoginChallenges } =  require('../models');
 */
 module.exports.newSignup = async (req, res, next) => {
     try {
-        const {_id, username} = await Users.create(req.body)
+
+        const { _id, username, pubKey } = await Users.create(req.body);
         const token = jwt.sign({ _id, username }, process.env.JWT_SECRET_KEY);
+
         return res.status(200).json({
             _id,
             username,
-            token
+            token,
+            server_key: publicEncryptServerPublicKey(pubKey),
         });
+
     } catch (err) {
         if (err.code === 11000) err.message = "Username already taken";
         err.status = 400;
-        return next (err);
+        return next(err);
     }
 }
 
@@ -42,27 +78,31 @@ module.exports.newSignup = async (req, res, next) => {
 */
 module.exports.login = async (req, res, next) => {
     try {
-        const user = await Users.findOne({username: req.params.username});
-        const challenge = crypto.randomBytes(20).toString('hex');
-        const encryptBuffer = Buffer.from(challenge);
+        const user = await Users.findOne({
+            username: req.params.username
+        });
+        const challenge = randomBytes(20).toString('hex');
         let _id;
         let encryptedChallenge;
         if (!user) {
-            const dummyPublicKey = fs.readFileSync(__dirname+ "/../resources/dummyPublicKey.pem").toString();
             _id = mongoose.Types.ObjectId();
-            encryptedChallenge = publicEncrypt(dummyPublicKey, encryptBuffer);
-        }else  {
+            encryptedChallenge = publicEncryptUsingDummyKey(challenge);
+        } else {
             const newChallenge = await LoginChallenges.create({
                 username: req.params.username,
                 challenge
             });
             _id = newChallenge._id;
-            encryptedChallenge = publicEncrypt(user.pubKey, encryptBuffer);
+            const encryptBuffer = Buffer.from(challenge, 'base64');
+            encryptedChallenge = publicEncryptUsingKey(user.pubKey, encryptBuffer);
         }
-        return res.json({ _id, challenge: encryptedChallenge.toString("base64") });
+        return res.json({
+            _id,
+            challenge: encryptedChallenge.toString("base64")
+        });
     } catch (err) {
         err.status = 403;
-        return next (err);
+        return next(err);
     }
 }
 
@@ -78,18 +118,27 @@ module.exports.login = async (req, res, next) => {
 */
 module.exports.verifyLogin = async (req, res, next) => {
     try {
-        const challengeTask = await LoginChallenges.findOne({_id : req.body._id, username: req.body.username });
-        if (!challengeTask ) throw new Error ('Invalid request');
-        if (Date.now() - challengeTak.date > 300000) throw new Error ("Challenge expired");
-        const user = Users.findOne({username: req.body.username});
-        const challengeBuffer = Buffer.from(req.body.challenge, 'base64')
-        const challengeSoln = publicDecrypt(user.pubKey, challengeBuffer);
+        const challengeTask = await LoginChallenges.findOne({
+            _id: req.body._id,
+            username: req.body.username
+        });
+        if (!challengeTask) throw new Error('Invalid request');
+        if (Date.now() - challengeTak.date > 300000) throw new Error("Challenge expired");
+        const user = Users.findOne({
+            username: req.body.username
+        });
+        const challengeBuffer = Buffer.from(req.body.challenge, 'base64');
+        const challengeSoln = publicDecryptUsingKey(user.pubKey, challengeBuffer);
         if (challengeSoln !== challengeTask.challenge) throw new Error("Challenge failed");
-        const token = jwt.sign({ _id: user._id, username: user.username }, process.env.JWT_SECRET_KEY);
+        const token = jwt.sign({
+            _id: user._id,
+            username: user.username
+        }, process.env.JWT_SECRET_KEY);
         return res.status(200).json({
             _id,
             username,
-            token
+            token,
+            server_key: publicEncryptServerPublicKey(user.pubKey)
         });
     } catch (err) {
         err.status = 403;
