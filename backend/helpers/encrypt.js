@@ -30,5 +30,5 @@ module.exports.publicEncryptUsingKey = (key, data) => {
 
 //  publicDec (key, data)
 module.exports.publicDecryptUsingKey = (key, data) => {
-    return breakAndApply(data, 200, substring => publicDecrypt(key, Buffer.from(substring)).toString("base64"));
+    return breakAndApply(data, 344, substring => publicDecrypt(key, Buffer.from(substring ,"base64")));
 }

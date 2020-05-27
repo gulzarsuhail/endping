@@ -1,4 +1,4 @@
-import { privateDecrypt } from 'crypto';
+import { privateDecrypt, privateEncrypt } from 'crypto';
 
 const breakAndApply = (data, length, apply) => {
     let finalData = '';
@@ -10,6 +10,8 @@ const breakAndApply = (data, length, apply) => {
     return finalData;
 }
 
-export const privateDecryptUsingKey = (key, data) => {
-    return breakAndApply (data, 344, substring => privateDecrypt( key, Buffer.from(substring, "base64") ));
-}
+export const privateDecryptUsingKey = (key, data) => 
+    breakAndApply (data, 344, substring => privateDecrypt(key, Buffer.from(substring, "base64")));
+
+export const privateEncryptUsingKey = (key, data) =>
+    breakAndApply (data, 200, substring => privateEncrypt(key, Buffer.from(substring)).toString("base64"));

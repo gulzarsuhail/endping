@@ -2,16 +2,37 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-const NavBar = () => {
+import { logoutUser } from '../store/actions/auth';
+
+const NavBar = ({currentUser, logoutUser}) => {
+
+
+	const logout = (e) => {
+		e.preventDefault();
+		logoutUser();
+	}
+
 	return (
 		<div>
 			<Link to={'/'}>ENDPING</Link>
-			<Link to={'/login'}>SIGNIN</Link>
-			<Link to={'/signup'}>SIGNUP</Link>
+			{(currentUser.isAuthenticated)
+				
+				?
+					<a onClick={logout}>LOGOUT</a>
+				:
+				(
+					<React.Fragment>
+						<Link to={'/login'}>SIGNIN</Link>
+						<Link to={'/signup'}>SIGNUP</Link>
+					</React.Fragment>
+				)
+			
+			}
+
 		</div>
 	);
 }
 
-const mapStateToProps = ({currentUser}) => currentUser;
+const mapStateToProps = ({currentUser}) => ({currentUser});
 
-export default connect(mapStateToProps, null)(NavBar);
+export default connect(mapStateToProps, {logoutUser})(NavBar);

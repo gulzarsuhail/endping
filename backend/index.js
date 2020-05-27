@@ -27,7 +27,6 @@ app.use ((req, res, next) => {
 
 // handle errors
 app.use ((err, req, res, next) => {
-    console.log(err.stack)
     const statusCode = err.status || 500;
     res.status(statusCode).json({error: err.message});
 });

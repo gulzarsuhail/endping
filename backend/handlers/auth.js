@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const { publicEncrypt, publicDecrypt, randomBytes } = require('crypto');
+const { randomBytes } = require('crypto');
 
 const { 
     publicEncryptUsingDummyKey, 
@@ -51,7 +51,7 @@ module.exports.newSignup = async (req, res, next) => {
 
         const { _id, username, pubKey } = await Users.create(req.body);
         const token = jwt.sign({ _id, username }, process.env.JWT_SECRET_KEY);
-
+        console.log(pubKey.length)
         return res.status(200).json({
             _id,
             username,
@@ -76,7 +76,7 @@ module.exports.newSignup = async (req, res, next) => {
             challenge: base64 encoded public key encrypted random string
         next(err): if error encountered
 */
-module.exports.login = async (req, res, next) => {
+module.exports.sendLoginChallenge = async (req, res, next) => {
     try {
         const user = await Users.findOne({
             username: req.params.username
@@ -93,12 +93,11 @@ module.exports.login = async (req, res, next) => {
                 challenge
             });
             _id = newChallenge._id;
-            const encryptBuffer = Buffer.from(challenge, 'base64');
-            encryptedChallenge = publicEncryptUsingKey(user.pubKey, encryptBuffer);
+            encryptedChallenge = publicEncryptUsingKey(user.pubKey, challenge);
         }
         return res.json({
             _id,
-            challenge: encryptedChallenge.toString("base64")
+            challenge: encryptedChallenge,
         });
     } catch (err) {
         err.status = 403;
@@ -123,20 +122,24 @@ module.exports.verifyLogin = async (req, res, next) => {
             username: req.body.username
         });
         if (!challengeTask) throw new Error('Invalid request');
-        if (Date.now() - challengeTak.date > 300000) throw new Error("Challenge expired");
-        const user = Users.findOne({
+        if (Date.now() - challengeTask.date > 300000) throw new Error("Challenge expired");
+        const user = await Users.findOne({
             username: req.body.username
         });
-        const challengeBuffer = Buffer.from(req.body.challenge, 'base64');
-        const challengeSoln = publicDecryptUsingKey(user.pubKey, challengeBuffer);
+        let challengeSoln = null;
+        try {
+            challengeSoln = publicDecryptUsingKey(user.pubKey, req.body.challengeSoln);
+        } catch (err) {
+            throw new Error ("Challenge failed");
+        }
         if (challengeSoln !== challengeTask.challenge) throw new Error("Challenge failed");
         const token = jwt.sign({
             _id: user._id,
             username: user.username
         }, process.env.JWT_SECRET_KEY);
         return res.status(200).json({
-            _id,
-            username,
+            _id: user._id,
+            username: user.username,
             token,
             server_key: publicEncryptServerPublicKey(user.pubKey)
         });

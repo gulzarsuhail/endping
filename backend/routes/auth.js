@@ -7,7 +7,7 @@ router.get("/signup/:username", authHandler.checkIfUsernameAvailable);
 
 router.post("/signup", authHandler.newSignup);
 
-router.get("/login/:username", function(req,res,next){console.log('here');next()}, authHandler.login);
+router.get("/login/:username", authHandler.sendLoginChallenge);
 
 router.post("/login", authHandler.verifyLogin);
 
