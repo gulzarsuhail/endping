@@ -7,7 +7,7 @@ const {
     publicEncryptServerPublicKey, 
     publicDecryptUsingKey, 
     publicEncryptUsingKey 
-} = require("../helpers/encrypt");
+} = require("./encrypt");
 
 const { Users, LoginChallenges } = require('../models');
 
@@ -53,8 +53,10 @@ module.exports.newSignup = async (req, res, next) => {
         const token = jwt.sign({ _id, username }, process.env.JWT_SECRET_KEY);
         console.log(pubKey.length)
         return res.status(200).json({
-            _id,
-            username,
+            user: {
+                _id,
+                username,
+            },
             token,
             server_key: publicEncryptServerPublicKey(pubKey),
         });
@@ -138,8 +140,10 @@ module.exports.verifyLogin = async (req, res, next) => {
             username: user.username
         }, process.env.JWT_SECRET_KEY);
         return res.status(200).json({
-            _id: user._id,
-            username: user.username,
+            user: {
+                _id: user._id,
+                username: user.username,
+            },
             token,
             server_key: publicEncryptServerPublicKey(user.pubKey)
         });

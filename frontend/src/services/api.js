@@ -1,11 +1,22 @@
 const API_ENDPOINT = "http://localhost:3002"
 
+const headers = {
+    'Content-Type': 'application/json'
+}
+
+export const setApiTokenHeader = token => {
+    if (token)
+        headers['Authorization'] = `Bearer ${token}`;
+    else
+        delete headers['Authorization'];
+}
+
 export function apiCall (path, method, data) {
     return new Promise((resolve, reject) => {
-        fetch(API_ENDPOINT + path, {
-            method, headers: {
-                'Content-Type': 'application/json',
-            },
+        fetch(API_ENDPOINT + path, 
+        {
+            method,
+            headers,
             body: JSON.stringify(data)
         })
         .then(response => {

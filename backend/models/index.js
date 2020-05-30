@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const Users = require("./users");
 const Chats = require("./chats");
-const Texts = require("./texts");
 const LoginChallenges = require("./loginChallenges");
 
 mongoose.connect("mongodb://localhost/endping", 
@@ -18,6 +17,6 @@ mongoose.Promise = Promise;
 
 module.exports ={
     Users,
-    Texts,
+    Chats,
     LoginChallenges,
 }

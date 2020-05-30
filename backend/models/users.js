@@ -16,16 +16,10 @@ const userSchema = new mongoose.Schema({
         maxlength: 450,
         unique: true,
     },
-    contacts: [
+    chats: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Users",
-        }
-    ],
-    texts: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Texts",
+            ref: "Chats",
         }
     ]
 });

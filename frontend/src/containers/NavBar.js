@@ -18,7 +18,7 @@ const NavBar = ({currentUser, logoutUser}) => {
 			{(currentUser.isAuthenticated)
 				
 				?
-					<a onClick={logout}>LOGOUT</a>
+					<button onClick={logout}>LOGOUT</button>
 				:
 				(
 					<React.Fragment>
