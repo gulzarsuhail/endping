@@ -12,7 +12,7 @@ const authRoutes = require("./routes/auth");
 const chatRoutes = require("./routes/chats");
 
 // app and middleware
-const app = express();
+const app = express({ mergeParams : true });
 app.use (morgan('tiny'));
 app.use (bodyParser.json());
 app.use (cors());
@@ -30,6 +30,7 @@ app.use ((req, res, next) => {
 
 // handle errors
 app.use ((err, req, res, next) => {
+    console.log(err);
     const statusCode = err.status || 500;
     res.status(statusCode).json({error: err.message});
 });

@@ -28,6 +28,7 @@ module.exports.checkIfUsernameAvailable = async (req, res, next) => {
                 available: !(dbQuery)
             });
         } else {
+            // #WARNING could be used to find which users exist
             const err = new Error ("Username already taken");
             err.status = 400;
             throw err;

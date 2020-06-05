@@ -3,16 +3,19 @@ const mongoose = require('mongoose');
 const Users = require('./users');
 
 const chatSchema = new mongoose.Schema({
-    text: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Texts'
+    
+    initiator: {
+        type: "String",
+        ref: 'Users',
+        required: true,
     },
-    users: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Users'
-        }
-    ],
+
+    reciepient: {
+        type: "String",
+        required: true,
+        ref: 'Users',
+    },
+
     messages: [
         {
             time: {
@@ -47,12 +50,12 @@ const chatSchema = new mongoose.Schema({
 
 chatSchema.pre("remove", async function(next){
     try{
-        const users = await Users.find({_id: {$in: this.users}});
-        // #TODO extend this function to be scalable
-        users[0].chats.remove(this.id);
-        users[1].chats.remove(this.id);
-        await users[0].save();
-        await users[1].save();
+        const userOne = await Users.findOne({username: this.initiator});
+        const userTwo = await Users.findOne({username: this.reciepient});
+        userOne.chats.remove(this.id);
+        userTwo.chats.remove(this.id);
+        await userOne.save();
+        await userTwo.save();
         return next();
     } catch (err) {
         return next(err);
