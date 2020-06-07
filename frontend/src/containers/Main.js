@@ -8,12 +8,17 @@ import { removeError } from '../store/actions/errors';
 import Homepage from '../components/Homepage';
 import LoginForm from '../components/LoginForm';
 import SignupForm from '../components/SignupForm';
+import Chats from './Chats';
 
-const Main = ({signupUser, loginUser, errors, removeError, currentUser}) => {
+const Main = ({signupUser, loginUser, errors, removeError, currentUser, drawerState}) => {
   return (
 	<React.Fragment>
 		<Switch>
-			<Route path="/" exact render={ props => <Homepage {...props} currentUser={currentUser} /> } />
+			<Route path="/" exact render={ props => {
+				return currentUser.isAuthenticated
+					? (<Chats {...props} currentUser={currentUser} drawerState={drawerState} />)
+					: (<Homepage {...props} currentUser={currentUser}/>) 
+			}} />
 			<Route path="/signup" exact render={props =>
 				<SignupForm {...props} onSubmitHandler={ signupUser } errors={errors} removeError={removeError} />
 			}/>

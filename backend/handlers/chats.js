@@ -3,7 +3,7 @@ const { Users, Chats } =  require('../models');
 /*
     @required params:
         URL params:
-            id: id of cuurent user
+            id: id of current user
         POST body:
             username: username of reciepient
     @return params:
@@ -13,10 +13,10 @@ const { Users, Chats } =  require('../models');
 module.exports.fetchAllUserChats = async (req, res, next) => {
     try {
         const user = req.user;
-        const chats =  await Chats.find({_id: {$in: user.chats}});
+        const chats =  await Chats.find({_id: {$in: user.chats}}).select("-messages").sort({'updated_At':1});
 
         // #TODO encrypt chat data
-        return res.json(user);
+        return res.json(chats);
 
     } catch (err) {
         next(err);
@@ -26,7 +26,7 @@ module.exports.fetchAllUserChats = async (req, res, next) => {
 /*
     @required params:
         URL params:
-            id: id of cuurent user
+            id: id of current user
         POST body:
             username: username of reciepient
     @return params:
@@ -38,9 +38,12 @@ module.exports.createNewChat = async (req, res, next) => {
         
         const initiatorUser = req.user;
         const reciepientUser = await Users.findOne({username: req.body.username});
-
+        
         // #WARNING could be used to find out which users exist
-        if (!initiatorUser || !reciepientUser) throw Error("User does not exist.");
+        if (!initiatorUser || !reciepientUser) throw Error("User does not exist");
+
+        // check if user trying to start chat with themselves
+        if (initiatorUser.username === reciepientUser.username) throw Error("Cannot start chat with yourself")
 
         // check if chat already exists
         const check1 = await Chats.findOne({initiator: initiatorUser.username, reciepient: reciepientUser.username});
@@ -68,6 +71,14 @@ module.exports.createNewChat = async (req, res, next) => {
     }
 }
 
+/*
+    @required params:
+        URL params:
+            chatid: id of chat to be deleted
+    @return params:
+        if success: ({success: true})
+        if fail: 500 error message
+*/
 module.exports.deleteChat = async (req, res, next) => {
     try {
         const chat = await Chats.findById(req.params.chatid);
@@ -80,18 +91,30 @@ module.exports.deleteChat = async (req, res, next) => {
     }
 }
 
+/*
+    @required params:
+        URL params:
+            chatid: id of the cahat
+        req properties:
+            req.user: the current user
+    @return params:
+        if success: ({
+            partnerKey: public key of partner,
+            ...chat
+        })
+        if fail: 500 error message
+*/
 module.exports.sendChatById = async (req, res, next) => {
     try {
         const user = req.user;
         const chat = await Chats.findById(req.params.chatid);
-
         const partnerUsername = (chat.reciepient === user.username) ? chat.initiator : chat.reciepient;
         const partner = await Users.findOne({username: partnerUsername});
 
         // #TODO encrypt all responses
         return res.json({
-            partnerPubKey: partner.pubKey,
-            chat,
+            partnerKey: partner.pubKey,
+            ...chat.toObject(),
         });
 
     } catch (err) {
@@ -99,6 +122,16 @@ module.exports.sendChatById = async (req, res, next) => {
     }
 }
 
+/*
+    @required params:
+        URL params:
+            chatid: id of the cahat
+        req properties:
+            req.user: the current user
+    @return params:
+        if success: created message object
+        if fail: 500 error message
+*/
 module.exports.createNewMessage = async (req, res, next) => {
     try {
         const user = req.user;

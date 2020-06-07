@@ -42,11 +42,7 @@ const chatSchema = new mongoose.Schema({
             }
         }
     ],
-    time: {
-        type: Date,
-        default: Date.now,
-    }
-});
+}, { timestamps: true });
 
 chatSchema.pre("remove", async function(next){
     try{

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function LoginForm({onSubmitHandler, errors, removeError, history}) {
+export default function SignupForm({onSubmitHandler, errors, removeError, history}) {
 
 	const [username, setUsername] = useState("");
 

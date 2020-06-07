@@ -9,8 +9,28 @@ import { setAuthPrivateKey, setAuthServerPublicKey, setAuthorizationToken, setCu
 import NavBar from './NavBar';
 import Main from './Main';
 
-const store = configureStore();
+import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import pink from '@material-ui/core/colors/purple';
 
+const theme = createMuiTheme({
+	palette: {
+		primary: {
+			main: '#ab47bc',
+		},
+		secondary: pink,
+	},
+	drawerWidth: 240,
+});
+
+const useStyles = makeStyles((theme) => ({
+	app: {
+		display: "flex",
+		flexFlow: "column",
+		height: "100%"
+	}
+}));
+
+const store = configureStore();
 
 // read and validate local storage data if any
 if (localStorage.jwtToken && localStorage.priKey && localStorage.serverKey) {
@@ -26,14 +46,25 @@ if (localStorage.jwtToken && localStorage.priKey && localStorage.serverKey) {
 	}
 }
 
+
 function App() {
+
+	const classes = useStyles();
+	const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+	const handleDrawerToggle = () => {
+		setDrawerOpen(!drawerOpen);
+	}
+
 	return (
 		<Provider store={store}>
 			<Router>
-				<div className="App">
-					<NavBar />
-					<Main />
-				</div>
+				<ThemeProvider theme={theme}>
+					<div className={classes.app}>
+						<NavBar handleDrawerToggle={handleDrawerToggle} />
+						<Main drawerState={[drawerOpen, setDrawerOpen]} />
+					</div>
+				</ThemeProvider>
 			</Router>
 		</Provider>
 	);
