@@ -14,8 +14,9 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Divider from '@material-ui/core/Divider';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme, prop) => ({
 	root: {
 		flex: "0 1 auto",
 	},
@@ -41,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	appBar: {
 		borderBottom: "2px solid " + theme.palette.primary.light
+	},
+	username: {
+		margin: theme.spacing(2),
 	}
 }));
 
@@ -65,7 +69,7 @@ const NavBar = ({currentUser, logoutUser, location, handleDrawerToggle}) => {
 	}
 
 	return (
-		<div className={classes.root, currentUser.isAuthenticated && classes.rootSidebar }>
+		<div className={`${classes.root} ${(currentUser.isAuthenticated && classes.rootSidebar)}`}>
 			<AppBar color="transparent" className={classes.appBar} position="static">
 				<Toolbar>
 					{currentUser.isAuthenticated && 
@@ -76,7 +80,7 @@ const NavBar = ({currentUser, logoutUser, location, handleDrawerToggle}) => {
 							aria-label="menu"
 							onClick={handleDrawerToggle}
 						>
-							<MenuIcon />
+							<MenuIcon color="primary" />
 						</IconButton>)
 					}
 					<Typography variant="h4" className={classes.title} >
@@ -109,6 +113,10 @@ const NavBar = ({currentUser, logoutUser, location, handleDrawerToggle}) => {
 									open={open}
 									onClose={handleClose}
 								>
+									<Typography color="primary" variant="subtitle2" className={classes.username}>
+										{currentUser.user.username}
+									</Typography>
+									<Divider variant="middle" />
 									<MenuItem onClick={handleClose}>Delete Account</MenuItem>
 									<MenuItem onClick={logout}>Logout</MenuItem>
 								</Menu>

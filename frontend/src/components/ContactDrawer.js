@@ -1,14 +1,15 @@
 import React from 'react';
 
-import LeftDrawer from './LeftDrawer';
-
+import NewChat from './NewChat';
+import ContactList from './ContactList';
 
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyle = makeStyles((theme) => ({
+const useStyle = makeStyles(theme => ({
     drawer: {
         [theme.breakpoints.up('sm')]: {
             width: theme.drawerWidth,
@@ -17,12 +18,23 @@ const useStyle = makeStyles((theme) => ({
     },
     drawerPaper: {
         width: theme.drawerWidth,
-    }
+    },
+    toolbar: theme.mixins.toolbar,
 }));
 
-export default function Contacts({drawerState}) {
+export default function ContactDrawer({drawerState, chats, currentUser}) {
     const classes = useStyle();
     const [drawerOpen, setDrawerOpen] = drawerState;
+
+    const drawer = (
+        <div>
+            <div className={classes.toolbar} />
+            <Divider />
+                <NewChat />
+            <Divider />
+           <ContactList chats={chats} currentUser={currentUser} />
+        </div>
+    );
 
     return (
         <nav className={classes.drawer} aria-label="mailbox folders">
@@ -31,7 +43,8 @@ export default function Contacts({drawerState}) {
                     variant="temporary"
                     anchor='left'
                     open={drawerOpen}
-                    onClose={()=>setDrawerOpen(!drawerOpen)}
+                    onClose={()=>setDrawerOpen(false)}
+                    onOpen={()=>(setDrawerOpen(true))}
                     classes={{
                         paper: classes.drawerPaper,
                     }}
@@ -39,7 +52,7 @@ export default function Contacts({drawerState}) {
                         keepMounted: true,
                     }}
                 >
-                    <LeftDrawer />
+                    {drawer}
                 </SwipeableDrawer>
                 </Hidden>
                 <Hidden xsDown implementation="css">
@@ -50,9 +63,9 @@ export default function Contacts({drawerState}) {
                     variant="permanent"
                     open
                 >
-                    <LeftDrawer />
+                    {drawer}
                 </Drawer>
             </Hidden>
       </nav>
-    )
+    );
 }

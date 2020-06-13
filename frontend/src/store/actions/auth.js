@@ -8,6 +8,7 @@ import { generateTextFile } from '../../services/generateTextFile';
 import { SET_CURRENT_USER } from '../actionTypes';
 import { addError, removeError } from './errors';
 import { setApiTokenHeader } from '../../services/api';
+import { setChats } from './chats';
 
 export function setCurrentUser (user) {
     return {
@@ -90,6 +91,7 @@ export function logoutUser () {
     return dispatch => {
         localStorage.clear();
         dispatch(setCurrentUser({}));
+        dispatch(setChats([]));
         setAuthorizationToken(false);
     }
 }

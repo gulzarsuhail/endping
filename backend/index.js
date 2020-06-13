@@ -19,7 +19,7 @@ app.use (cors());
 
 // set up route handlers
 app.use("/api/auth", authRoutes);
-app.use("/api/chats/:id", loginRequired, ensureCorrectUser, chatRoutes);
+app.use("/api/chats", loginRequired, ensureCorrectUser, chatRoutes);
 
 // handle 404
 app.use ((req, res, next) => {

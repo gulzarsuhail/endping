@@ -10,14 +10,15 @@ import NavBar from './NavBar';
 import Main from './Main';
 
 import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
-import pink from '@material-ui/core/colors/purple';
 
 const theme = createMuiTheme({
 	palette: {
 		primary: {
 			main: '#ab47bc',
 		},
-		secondary: pink,
+		secondary: {
+			main: '#d81b60',
+		},
 	},
 	drawerWidth: 240,
 });

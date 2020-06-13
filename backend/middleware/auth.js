@@ -56,7 +56,7 @@ module.exports.ensureCorrectUser = async (req, res, next) => {
         const token = req.headers.authorization.split(" ")[1];
         const decoded = await verifyJWT(token);
         const user = await Users.findById(decoded._id);
-        if (decoded && user && decoded._id === req.params.id) {
+        if (decoded && user) {
             req.user = user;
             next();
         } else {
