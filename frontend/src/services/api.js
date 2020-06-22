@@ -13,7 +13,6 @@ export const setApiTokenHeader = token => {
 
 export function apiCall (path, method, data) {
     return new Promise((resolve, reject) => {
-        console.log("API CALL TO " + path)
         fetch(API_ENDPOINT + path, 
         {
             method,
@@ -33,9 +32,7 @@ export function apiCall (path, method, data) {
         .then (result => resolve(result))
         .catch(err =>  {
             err.then(error => {
-                console.log("ERRROR")
-                console.log(error)
-                reject(error)
+                reject(new Error(error.error));
             });
         });
     });   

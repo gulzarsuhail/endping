@@ -6,7 +6,7 @@ import { setServerKey, setPrivateKey, privateDecryptUsingAuthKey, privateEncrypt
 import { generateTextFile } from '../../services/generateTextFile';
 
 import { SET_CURRENT_USER } from '../actionTypes';
-import { addError, removeError } from './errors';
+import { setLoginError } from './errors';
 import { setApiTokenHeader } from '../../services/api';
 import { setChats } from './chats';
 
@@ -43,7 +43,6 @@ export function loginUser(userData) {
                         challengeSoln, _id, username: userData.username
                     });
                 } catch (err) {
-                    console.log(err)
                     throw new Error("Username or key file invalid");
                 }
 
@@ -51,7 +50,7 @@ export function loginUser(userData) {
             .then(user => userLoggedInHandler(dispatch, [userData.priKey, user]))
             .then (() => resolve())
             .catch(err => {
-                dispatch(addError(err.message));
+                dispatch(setLoginError(err.message));
                 reject();
             });
 
@@ -80,7 +79,7 @@ export function signupUser(username) {
                 generateTextFile(priKey, `${username}_endping.pem`);
                 resolve();
             }).catch(err => {
-                dispatch(addError(err))
+                dispatch(setLoginError(err.message))
                 reject();
             });
         });
@@ -115,7 +114,7 @@ function userLoggedInHandler (dispatch, [priKey, {user, token, server_key}]) {
             // save server public key in local storage
             localStorage.setItem("serverKey", serverPublicKey);
 
-            dispatch(removeError());
+            dispatch(setLoginError(null));
 
             // set the current user
             dispatch(setCurrentUser(user));

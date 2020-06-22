@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -17,17 +17,61 @@ const useStyle = makeStyles(theme => ({
             width: `calc(100% - ${2*theme.spacing(1)}px)`,
         },
     },
+    textField: {
+        marginTop: theme.spacing(2),
+    }
 }));
 
-export default function NewChat() {
-
+export default function NewChat({addNewChat, newChatError, setNewChatError}) {
     const classes = useStyle();
 
+    const [username, setUsername] = useState("");
+
+    const onSubmitHandler = e => {
+        e.preventDefault();
+        const usernameREGEX = /^([a-zA-Z0-9_-]){5,32}$/
+        if (username === "") {
+            setNewChatError("Username cannot be empty");
+        } else if (usernameREGEX.test(username)){
+            setNewChatError(null);
+            addNewChat({username: username})
+            .then(()=>setUsername(""))
+            .catch(() => {return});
+        } else {
+            setNewChatError("Invalid username");
+        }
+    }
+
     return (
-        <form className={classes.root}>
+        <form className={classes.root} onSubmit={onSubmitHandler}>
             <Typography variant="button" color="primary">New chat</Typography>
-            <TextField id="outlined-basic" label="Username" fullWidth variant="outlined" size="small"  />
-            <Button variant="contained" color="primary">Send Request</Button>
+            {   (!!newChatError)
+                ?
+                (<TextField
+                    error
+                    helperText={newChatError}
+                    id="outlined-basic"
+                    value={username}
+                    onChange={(e)=>setUsername(e.target.value)}
+                    label="Username"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    className={classes.textField} 
+                />)
+                :
+                (<TextField
+                    id="outlined-basic"
+                    value={username}
+                    onChange={(e)=>setUsername(e.target.value)}
+                    label="Username"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    className={classes.textField}
+                />)
+            }
+            <Button variant="contained" type="submit" color="primary">Send Request</Button>
         </form>
     );
 }

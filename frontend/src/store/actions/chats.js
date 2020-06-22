@@ -1,4 +1,4 @@
-import { addError, removeError } from './errors';
+import { setNewChatError } from './errors';
 import { CREATE_NEW_CHAT, SET_CHATS } from '../actionTypes';
 import { apiCall } from '../../services/api';
 
@@ -16,26 +16,26 @@ export function addChat (chat) {
     }
 }
 
-export const fetchAllChats = () => dispatch => new Promise((resolve, reject) => {
+export const fetchChatList = () => dispatch => new Promise((resolve, reject) => {
     return apiCall("/api/chats", 'GET')
     .then(chats => {
-        dispatch(removeError());
+        dispatch(setNewChatError(null));
         dispatch(setChats(chats));
         resolve();
     }).catch(err => {
-        dispatch(addError(err.message));
+        dispatch(setNewChatError(err.message));
         reject();
     });
 });
 
-export const addNewChat = chat => dispatch => new Promise((resolve, reject) => {
-    return apiCall("/api/chats", 'POST')
-    .then(chats => {
-        dispatch(removeError());
+export const addNewChat = user => dispatch => new Promise((resolve, reject) => {
+    return apiCall("/api/chats", 'POST', user)
+    .then(chat => {
+        dispatch(setNewChatError(null));
         dispatch(addChat(chat));
         resolve();
     }).catch(err => {
-        dispatch(addError(err.message));
+        dispatch(setNewChatError(err.message));
         reject();
     });
 });

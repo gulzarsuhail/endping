@@ -1,10 +1,11 @@
-import { ADD_ERROR, REMOVE_ERROR } from '../actionTypes';
+import { SET_LOGIN_ERROR, SET_NEW_CHAT_ERROR } from '../actionTypes';
 
-export const addError = error => ({
-    type: ADD_ERROR,
-    error
+export const setLoginError = error => ({
+    type: SET_LOGIN_ERROR,
+    error,
 });
 
-export const removeError = error => ({
-    type: REMOVE_ERROR,
+export const setNewChatError = error => ({
+    type: SET_NEW_CHAT_ERROR,
+    error,
 });

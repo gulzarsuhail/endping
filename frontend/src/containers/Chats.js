@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchAllChats } from '../store/actions/chats';
+import { fetchChatList, addNewChat } from '../store/actions/chats';
+import { setNewChatError } from '../store/actions/errors';
 
 import ContactDrawer from '../components/ContactDrawer';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,23 +13,30 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Chats({drawerState, chats, fetchAllChats, currentUser}) {
+function Chats({drawerState, chats, fetchChatList, addNewChat, currentUser, newChatError, setNewChatError}) {
     const classes = useStyles();
 
-    const fetchChata = useCallback(fetchAllChats);
+    const getChatList = useCallback(fetchChatList);
 
     useEffect(()=> {
-        fetchChata();
-    }, [fetchChata]);
+        getChatList();
+    }, [getChatList]);
 
     return (
         <div className={classes.root}>
-            <ContactDrawer drawerState={drawerState} currentUser={currentUser} chats={chats} />
+            <ContactDrawer
+                drawerState={drawerState}
+                newChatError={newChatError}
+                addNewChat={addNewChat}
+                currentUser={currentUser}
+                chats={chats}
+                setNewChatError={setNewChatError}
+            />
             {/* #TODO: Add chats here */}
         </div>
     );
 }
 
-const mapStateToProps = ({chats, currentUser}) => ({chats, currentUser});
+const mapStateToProps = ({chats, currentUser, errors}) => ({chats, currentUser, newChatError: errors.newChat});
 
-export default connect(mapStateToProps, {fetchAllChats})(Chats);
+export default connect(mapStateToProps, {fetchChatList, addNewChat, setNewChatError})(Chats);

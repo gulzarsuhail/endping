@@ -34,7 +34,7 @@ export default function ContactList({chats, currentUser}) {
 
     return (
         <div className={classes.root}>
-            <Typography className={classes.labelText} variant="button" color="primary">New chat</Typography>
+            <Typography className={classes.labelText} variant="button" color="primary">MY CHATS</Typography>
             <List>
                 { contactList }
             </List>

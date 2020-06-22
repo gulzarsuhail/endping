@@ -1,18 +1,21 @@
-import { ADD_ERROR, REMOVE_ERROR } from '../actionTypes';
+import { SET_LOGIN_ERROR, SET_NEW_CHAT_ERROR } from '../actionTypes';
 
 const defaultState = {
-    message: null,
+    login: null,
+    newChat: null,
 }
 
 export default (state = defaultState, action) => {
     switch (action.type) {
-        case ADD_ERROR:
+        case SET_LOGIN_ERROR:
             return {
-                ...state, message: action.error
+                ...state,
+                login: action.error,
             };
-        case REMOVE_ERROR:
+        case SET_NEW_CHAT_ERROR:
             return {
-                ...state, message: null
+                ...state,
+                newChat: action.error,
             };
         default:
             return state

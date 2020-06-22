@@ -13,11 +13,9 @@ const { Users, Chats } =  require('../models');
 module.exports.fetchAllUserChats = async (req, res, next) => {
     try {
         const user = req.user;
-        const chats =  await Chats.find({_id: {$in: user.chats}}).select("-messages").sort({'updated_At':1});
-
+        const chats =  await Chats.find({_id: {$in: user.chats}}).select("-messages").sort({'updatedAt':-1});
         // #TODO encrypt chat data
         return res.json(chats);
-
     } catch (err) {
         next(err);
     }

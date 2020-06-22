@@ -8,8 +8,8 @@ export default  (state=defaultState, action) => {
             return (action.chats);
         case CREATE_NEW_CHAT:
             return ([
-                ...state,
                 action.chat,
+                ...state,
             ]);
         default:
             return state;
