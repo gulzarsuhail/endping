@@ -7,7 +7,7 @@ export default function SignupForm({onSubmitHandler, errors, removeError, histor
 	const handleSubmit = async e => {
 		e.preventDefault();
 		onSubmitHandler(username)
-		.then(() => history.push("/"))
+		.then(() => history.push("/chats"))
 		.catch(err => {return});
 	}
 

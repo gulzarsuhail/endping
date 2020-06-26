@@ -26,7 +26,7 @@ export default function LoginForm({onSubmitHandler, errors, removeError, history
 		e.preventDefault();
 		readTextFile(file)
 		.then(keyFile => onSubmitHandler({username, priKey: keyFile}))
-		.then(() => history.push("/"))
+		.then(() => history.push("/chats"))
 		.catch(err => {return});
 	}
 

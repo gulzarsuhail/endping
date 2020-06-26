@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
 import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
@@ -26,7 +27,7 @@ export default function ContactList({chats, currentUser}) {
     const classes = useStyle();
 
     const contactList = chats.map((chat, index) => (
-        <ListItem button key={chat._id}>
+        <ListItem button key={chat._id} component={Link} to={`/chat/${chat._id}`} >
             <ListItemIcon>{index % 2 === 0 ? <ChatBubbleOutlinedIcon /> : <MessageOutlinedIcon />}</ListItemIcon>
             <ListItemText primary={(chat.initiator === currentUser.user.username) ? chat.reciepient : chat.initiator } />
         </ListItem>
