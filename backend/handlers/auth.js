@@ -52,7 +52,6 @@ module.exports.newSignup = async (req, res, next) => {
 
         const { _id, username, pubKey } = await Users.create(req.body);
         const token = jwt.sign({ _id, username }, process.env.JWT_SECRET_KEY);
-        console.log(pubKey.length)
         return res.status(200).json({
             user: {
                 _id,
@@ -60,6 +59,7 @@ module.exports.newSignup = async (req, res, next) => {
             },
             token,
             server_key: publicEncryptServerPublicKey(pubKey),
+            pubKey,
         });
 
     } catch (err) {
@@ -146,7 +146,8 @@ module.exports.verifyLogin = async (req, res, next) => {
                 username: user.username,
             },
             token,
-            server_key: publicEncryptServerPublicKey(user.pubKey)
+            server_key: publicEncryptServerPublicKey(user.pubKey),
+            pubKey: user.pubKey,
         });
     } catch (err) {
         err.status = 403;

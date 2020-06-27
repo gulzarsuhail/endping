@@ -34,8 +34,7 @@ const Main = ({signupUser, loginUser, errors, setLoginError, currentUser, drawer
 				/>
 				{/* #TODO: Use HOCS instead of if else */}
 				<Route 
-					path="/chats"
-					exact
+					path={["/chats/:chatID", "/chats/"]}
 					render = {
 						props => {
 							if (!currentUser.isAuthenticated) {

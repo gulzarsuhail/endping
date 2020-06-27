@@ -143,10 +143,9 @@ module.exports.createNewMessage = async (req, res, next) => {
             recieverMessage: req.body.recieverMessage,
             time: Date.now()
         }
-
         chat.messages.push(newMessage);
-        await chat.save();
-        return res.json(newMessage);
+        const resMessage = await chat.save();
+        return res.json(resMessage.messages[resMessage.messages.length -1]);
     } catch (err) {
         next (err);
     }

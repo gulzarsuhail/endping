@@ -22,7 +22,15 @@ const useStyle = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,
 }));
 
-export default function ContactDrawer({drawerState, chats, currentUser, addNewChat, newChatError, setNewChatError}) {
+export default function ContactDrawer({
+    drawerState,
+    chats,
+    currentUser,
+    addNewChat,
+    newChatError,
+    setNewChatError,
+    selectedChatID
+}) {
     const classes = useStyle();
     const [drawerOpen, setDrawerOpen] = drawerState;
 
@@ -39,6 +47,7 @@ export default function ContactDrawer({drawerState, chats, currentUser, addNewCh
             <ContactList 
                 chats={chats}
                 currentUser={currentUser}
+                selectedChatID={selectedChatID}
             />
         </div>
     );

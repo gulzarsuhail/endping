@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 
 import { configureStore } from '../store';
-import { setAuthPrivateKey, setAuthServerPublicKey, setAuthorizationToken, setCurrentUser } from '../store/actions/auth';
+import { setAuthPrivateKey, setAuthServerPublicKey, setAuthorizationToken, setCurrentUser, setAuthPublicKey } from '../store/actions/auth';
 
 import NavBar from './NavBar';
 import Main from './Main';
@@ -38,6 +38,7 @@ if (localStorage.jwtToken && localStorage.priKey && localStorage.serverKey) {
 	try {
 		store.dispatch(setCurrentUser(jwtDecode(localStorage.jwtToken)));
 		setAuthPrivateKey(localStorage.priKey);
+		setAuthPublicKey(localStorage.pubKey);
 		setAuthServerPublicKey(localStorage.serverKey);
 		setAuthorizationToken(localStorage.jwtToken);
 	} catch (err) {

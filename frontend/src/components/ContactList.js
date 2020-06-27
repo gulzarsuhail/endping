@@ -22,12 +22,12 @@ const useStyle = makeStyles(theme => ({
     },
 }));
 
-export default function ContactList({chats, currentUser}) {
+export default function ContactList({chats, currentUser, selectedChatID}) {
 
     const classes = useStyle();
 
     const contactList = chats.map((chat, index) => (
-        <ListItem button key={chat._id} component={Link} to={`/chat/${chat._id}`} >
+        <ListItem selected={selectedChatID === chat._id}  button key={chat._id} component={Link} to={`/chats/${chat._id}`} >
             <ListItemIcon>{index % 2 === 0 ? <ChatBubbleOutlinedIcon /> : <MessageOutlinedIcon />}</ListItemIcon>
             <ListItemText primary={(chat.initiator === currentUser.user.username) ? chat.reciepient : chat.initiator } />
         </ListItem>

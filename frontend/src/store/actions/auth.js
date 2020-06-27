@@ -1,6 +1,6 @@
 import { apiCall } from '../../services/api';
 import { genKeyPair } from '../../services/generateKeyPair';
-import { setServerKey, setPrivateKey, privateDecryptUsingAuthKey, privateEncryptUsingAuthKey } from '../../services/encrypt';
+import { setServerKey, setPrivateKey, setPublicKey, privateDecryptUsingAuthKey, privateEncryptUsingAuthKey } from '../../services/encrypt';
 
 // #TODO: Move this somewhere else
 import { generateTextFile } from '../../services/generateTextFile';
@@ -29,6 +29,9 @@ export function setAuthPrivateKey (priKey) {
     setPrivateKey(priKey);
 }
 
+export function setAuthPublicKey (pubKey) {
+    setPublicKey(pubKey);
+}
 
 export function loginUser(userData) {
     return dispatch => {
@@ -95,7 +98,7 @@ export function logoutUser () {
     }
 }
 
-function userLoggedInHandler (dispatch, [priKey, {user, token, server_key}]) {
+function userLoggedInHandler (dispatch, [priKey, {user, token, server_key, pubKey}]) {
     return new Promise ((resolve, reject) => {
         try {
 
@@ -103,6 +106,11 @@ function userLoggedInHandler (dispatch, [priKey, {user, token, server_key}]) {
             setAuthPrivateKey(priKey);
             // save the user personal key
             localStorage.setItem("priKey", priKey);
+
+            // set private key
+            setAuthPublicKey(pubKey);
+            // save the user personal key
+            localStorage.setItem("pubKey", pubKey);
 
             // authorize further api calls
             setAuthorizationToken(token);
@@ -113,6 +121,7 @@ function userLoggedInHandler (dispatch, [priKey, {user, token, server_key}]) {
             const serverPublicKey = privateDecryptUsingAuthKey(server_key);
             // save server public key in local storage
             localStorage.setItem("serverKey", serverPublicKey);
+            setAuthServerPublicKey(serverPublicKey);
 
             dispatch(setLoginError(null));
 

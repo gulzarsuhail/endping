@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyle = makeStyles(theme => ({
@@ -22,10 +24,23 @@ const useStyle = makeStyles(theme => ({
     }
 }));
 
+const  Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
 export default function NewChat({addNewChat, newChatError, setNewChatError}) {
     const classes = useStyle();
 
     const [username, setUsername] = useState("");
+
+    const [newChatSuccessMessage, setNewChatSuccessMessage] = useState("");
+
+    const handleSuccessMessageClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setNewChatSuccessMessage("");
+    };
 
     const onSubmitHandler = e => {
         e.preventDefault();
@@ -35,8 +50,10 @@ export default function NewChat({addNewChat, newChatError, setNewChatError}) {
         } else if (usernameREGEX.test(username)){
             setNewChatError(null);
             addNewChat({username: username})
-            .then(()=>setUsername(""))
-            .catch(() => {return});
+            .then(()=> {
+                setNewChatSuccessMessage(`New chat request sent sucessfully to ${username}`);
+                setUsername("");
+            }).catch(() => {});
         } else {
             setNewChatError("Invalid username");
         }
@@ -50,7 +67,6 @@ export default function NewChat({addNewChat, newChatError, setNewChatError}) {
                 (<TextField
                     error
                     helperText={newChatError}
-                    id="outlined-basic"
                     value={username}
                     onChange={(e)=>setUsername(e.target.value)}
                     label="Username"
@@ -61,7 +77,6 @@ export default function NewChat({addNewChat, newChatError, setNewChatError}) {
                 />)
                 :
                 (<TextField
-                    id="outlined-basic"
                     value={username}
                     onChange={(e)=>setUsername(e.target.value)}
                     label="Username"
@@ -72,6 +87,11 @@ export default function NewChat({addNewChat, newChatError, setNewChatError}) {
                 />)
             }
             <Button variant="contained" type="submit" color="primary">Send Request</Button>
+            <Snackbar open={newChatSuccessMessage !== ""} autoHideDuration={6000} onClose={handleSuccessMessageClose}>
+                <Alert onClose={handleSuccessMessageClose} severity="success">
+                    {newChatSuccessMessage}
+                </Alert>
+            </Snackbar>
         </form>
     );
 }
