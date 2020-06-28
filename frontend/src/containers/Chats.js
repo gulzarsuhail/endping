@@ -44,12 +44,12 @@ function Chats({
     
     useEffect(() => {
         if (!!chatID) {
-            fetchConversation(chatID)
+            fetchConversation(chatID, currentUser.user._id)
             .catch(()=> {});
         } else {
             setConversation(null);
         }
-    }, [chatID, fetchConversation, setConversation])
+    }, [chatID, fetchConversation, setConversation, currentUser])
 
 
     return (
