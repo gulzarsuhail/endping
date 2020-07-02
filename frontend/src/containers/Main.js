@@ -10,13 +10,25 @@ import LoginForm from '../components/LoginForm';
 import SignupForm from '../components/SignupForm';
 import Chats from './Chats';
 
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexFlow: "column",
+		overflow: "hidden",
+	}
+}));
+
 const Main = ({signupUser, loginUser, errors, setLoginError, currentUser, drawerState, ...props}) => {
+
+	const classes = useStyles();
 
 	const removeError = () => setLoginError(null);
 
 	// #TODO: Use HOCS to redirect routes based on login status
 	return (
-		<React.Fragment>
+		<div className={classes.root}>
 			<Switch>
 				{/* #TODO: Use HOCS instead of if else */}
 				<Route 
@@ -52,7 +64,7 @@ const Main = ({signupUser, loginUser, errors, setLoginError, currentUser, drawer
 					<LoginForm {...props} onSubmitHandler={ loginUser } errors={errors} removeError={removeError} /> }
 				/>
 			</Switch>
-		</React.Fragment>
+		</div>
 	);
 }
 

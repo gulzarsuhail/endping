@@ -10,8 +10,8 @@ export default (state = defaultConversation, action) => {
             if (state !== null){
                 return({
                     ...state,
-                    messages: [...state.messages, action.messages],
-                })
+                    messages: [...state.messages, action.message],
+                });
             } else {
                 return state;
             }

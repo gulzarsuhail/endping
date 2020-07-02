@@ -11,12 +11,13 @@ const useStyles = makeStyles((theme) => ({
         flex: "1 1 auto",
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
     },
     messagesContainer: {
-        backgroundColor: "yellow",
         display: "flex",
         flexDirection: "column",
-        flexGrow: "1",
+        flex: "1 1 auto",
+        overflowY:"scroll",
     },
     newMessageContainer: {
         backgroundColor: "#fafafa",
@@ -26,11 +27,25 @@ const useStyles = makeStyles((theme) => ({
 const Conversation = ({conversation, error, sendNewMessage}) => {
 
     const classes = useStyles();
-
+    const conv = (!!conversation)
+        ? conversation.messages.map(msg => (
+            <div key={msg._id}>
+                <span>{msg.sender ? "ME " : "HIM "}</span>
+                {msg.message}
+            </div>
+        ))
+        : [];
+    
     return (
         <div className={classes.root}>
             <Container maxWidth="md" className={classes.messagesContainer}>
-                asd
+                {!!conversation 
+                    ?
+                        conv
+                    : (
+                        <div>Start a chat</div>
+                    )
+                }
             </Container>
             {!!conversation &&
                 (<Paper className={classes.newMessageContainer} elevation={3}>
@@ -38,10 +53,8 @@ const Conversation = ({conversation, error, sendNewMessage}) => {
                         <NewMessage
                             newMessageHandler={
                                 message => {
-                                    alert("JAJDKJASDJLDJKL")
                                     sendNewMessage(conversation._id, conversation.partnerKey, message)
                                 }
-
                             }
                         />
                     </Container>

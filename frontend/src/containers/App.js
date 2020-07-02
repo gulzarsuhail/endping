@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
 	app: {
 		display: "flex",
 		flexFlow: "column",
-		height: "100%"
+		minHeight: "100%",
+		maxHeight: "100%",
 	}
 }));
 

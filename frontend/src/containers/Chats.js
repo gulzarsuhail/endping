@@ -13,6 +13,7 @@ import Conversation from '../components/Conversation';
 const useStyles = makeStyles((theme) => ({
     root: {
         flex: "1 1 auto",
+        overflowY: "hidden",
         display: "flex",
         flexDirection: "row"
     },

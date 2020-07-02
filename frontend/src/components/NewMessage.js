@@ -25,8 +25,7 @@ export default function NewMessage({newMessageHandler}) {
 
     const [message, setMessage] = useState("");
 
-    const handleSubmit = e => {
-        e.preventDefault();
+    const handleSubmit = () => {
         if (message === "") return;
         else {
             newMessageHandler(message)
@@ -35,7 +34,14 @@ export default function NewMessage({newMessageHandler}) {
     }
 
     return (
-        <form className={classes.root} onSubmit={handleSubmit}>
+        <form className={classes.root}
+            onSubmit={
+                e => {
+                    e.preventDefault();
+                    handleSubmit()
+                }
+            }
+        >
             <TextField
                 id="outlined-textarea"
                 label="Message"
@@ -43,7 +49,13 @@ export default function NewMessage({newMessageHandler}) {
                 variant="outlined"
                 className={classes.messageTextBox}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                        if (e.target.value[e.target.value.length -1 ] === '\n')
+                            handleSubmit();
+                        else
+                            setMessage(e.target.value)
+                    }
+                }
             />
             <Button variant="contained" color="primary" type="submit">
                 <SendIcon />

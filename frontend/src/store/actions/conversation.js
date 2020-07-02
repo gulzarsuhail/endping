@@ -58,10 +58,15 @@ export const sendNewMessage = (chatID, recieverPublicKey, message) => dispatch =
         senderMessage: publicEncryptUsingAuthKey(message),
         recieverMessage: encryptMessageForReciever (recieverPublicKey, message),
     }
-    alert("HERE")
     return apiCall(`/api/chats/${chatID}`, 'POST', outboundMessage)
     .then(res => {
-        dispatch (addConversationMessage(res))
+        const newMessage = {
+            time: res.time,
+            message,
+            sender: true,
+            _id: res._id
+        }
+        dispatch (addConversationMessage(newMessage))
         resolve();
     }).catch(() => {
         dispatch(setConversationError(`Error sending message ${message}`));
