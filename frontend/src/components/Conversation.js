@@ -1,6 +1,7 @@
 import React from 'react';
 
-import NewMessage from './NewMessage'
+import NewMessage from './NewMessage';
+import Message from './Message';
 
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
@@ -18,9 +19,18 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "column",
         flex: "1 1 auto",
         overflowY:"scroll",
+        padding: "10px 20px",
+        boxSizing: "border-box",
     },
     newMessageContainer: {
         backgroundColor: "#fafafa",
+        zIndex: 10,
+    },
+    startChat: {
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        flex: "1 1 auto",
     }
 }));
 
@@ -29,24 +39,20 @@ const Conversation = ({conversation, error, sendNewMessage}) => {
     const classes = useStyles();
     const conv = (!!conversation)
         ? conversation.messages.map(msg => (
-            <div key={msg._id}>
-                <span>{msg.sender ? "ME " : "HIM "}</span>
-                {msg.message}
-            </div>
-        ))
-        : [];
-    
+            <Message key={msg._id} msg={msg} />
+        )) : [];
+
     return (
         <div className={classes.root}>
-            <Container maxWidth="md" className={classes.messagesContainer}>
-                {!!conversation 
-                    ?
-                        conv
-                    : (
-                        <div>Start a chat</div>
-                    )
-                }
-            </Container>
+            {!!conversation ? (
+                <Container elevation={1} square={true} maxWidth="md" component={Paper} className={classes.messagesContainer}>
+                    { conv }
+                </Container>
+            ) : (
+                <Container maxWidth="md" className={classes.startChat}>
+                    LOADING WALA DIV
+                </Container>
+            )}
             {!!conversation &&
                 (<Paper className={classes.newMessageContainer} elevation={3}>
                     <Container maxWidth="md" disableGutters={true}>

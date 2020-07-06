@@ -50,8 +50,7 @@ function Chats({
         } else {
             setConversation(null);
         }
-    }, [chatID, fetchConversation, setConversation, currentUser])
-
+    }, [chatID, fetchConversation, setConversation, currentUser]);
 
     return (
         <div className={classes.root}>
@@ -64,11 +63,17 @@ function Chats({
                 setNewChatError={setNewChatError}
                 selectedChatID={chatID}
             />
-            <Conversation 
-                conversation={conversation}
-                error={conversationError}
-                sendNewMessage={sendNewMessage}
-            />
+            { !!chatID ?
+                (<Conversation 
+                    conversation={conversation}
+                    error={conversationError}
+                    sendNewMessage={sendNewMessage}
+                />) 
+                :
+                (<div>
+                    START NEW CHAT DIV
+                </div>)
+            }
         </div>
     );
 }
