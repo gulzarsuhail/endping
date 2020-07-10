@@ -6,16 +6,17 @@ import { fetchChatList, addNewChat } from '../store/actions/chats';
 import { setNewChatError } from '../store/actions/errors';
 import { fetchConversation, setConversation, sendNewMessage } from '../store/actions/conversation';
 
-import ContactDrawer from '../components/ContactDrawer';
-import { makeStyles } from '@material-ui/core/styles';
 import Conversation from '../components/Conversation';
+import ContactDrawer from '../components/ContactDrawer';
+
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         flex: "1 1 auto",
         overflowY: "hidden",
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "row",
     },
 }));
 

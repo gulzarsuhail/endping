@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import NewMessage from './NewMessage';
 import Message from './Message';
@@ -21,38 +21,38 @@ const useStyles = makeStyles((theme) => ({
         overflowY:"scroll",
         padding: "10px 20px",
         boxSizing: "border-box",
+        backgroundColor: "#fdfdfd"
     },
     newMessageContainer: {
         backgroundColor: "#fafafa",
         zIndex: 10,
     },
-    startChat: {
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        flex: "1 1 auto",
-    }
 }));
 
 const Conversation = ({conversation, error, sendNewMessage}) => {
 
     const classes = useStyles();
+
+    var convEndRef = useRef();
+
     const conv = (!!conversation)
         ? conversation.messages.map(msg => (
             <Message key={msg._id} msg={msg} />
         )) : [];
 
+    useEffect(()=> {
+        convEndRef.current.scrollTop = convEndRef.current.scrollHeight;
+    }, [conv])
+
     return (
         <div className={classes.root}>
-            {!!conversation ? (
-                <Container elevation={1} square={true} maxWidth="md" component={Paper} className={classes.messagesContainer}>
-                    { conv }
+                <Container ref={convEndRef} elevation={2} square={true} maxWidth="md" component={Paper} className={classes.messagesContainer}>
+                    {!!conversation ? (
+                            conv 
+                    ) : (
+                        <h1>LOADING WALA DIV</h1>
+                    )}
                 </Container>
-            ) : (
-                <Container maxWidth="md" className={classes.startChat}>
-                    LOADING WALA DIV
-                </Container>
-            )}
             {!!conversation &&
                 (<Paper className={classes.newMessageContainer} elevation={3}>
                     <Container maxWidth="md" disableGutters={true}>
