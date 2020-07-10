@@ -22,7 +22,7 @@ export function addConversationMessage (message) {
     }
 }
 
-export const fetchConversation = (chatID, userID) => dispatch => new Promise((resolve, reject) => {
+export const fetchConversation = (chatID, username) => dispatch => new Promise((resolve, reject) => {
     return apiCall(`/api/chats/${chatID}`, 'GET')
     .then(conv => {
         dispatch(setConversationError(null));
@@ -31,7 +31,7 @@ export const fetchConversation = (chatID, userID) => dispatch => new Promise((re
                 time: message.time,
                 _id: message._id,
             }
-            if (message.sender === userID){
+            if (message.sender === username){
                 return ({
                     ...defaultMessage,
                     sender: true,
@@ -68,7 +68,8 @@ export const sendNewMessage = (chatID, recieverPublicKey, message) => dispatch =
         }
         dispatch (addConversationMessage(newMessage))
         resolve();
-    }).catch(() => {
+    }).catch((err) => {
+        console.log(err);
         dispatch(setConversationError(`Error sending message ${message}`));
         reject();
     })

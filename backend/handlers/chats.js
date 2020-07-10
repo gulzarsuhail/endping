@@ -109,6 +109,15 @@ module.exports.sendChatById = async (req, res, next) => {
         const partnerUsername = (chat.reciepient === user.username) ? chat.initiator : chat.reciepient;
         const partner = await Users.findOne({username: partnerUsername});
 
+        if (chat.messages.length !== 0){
+            if (chat.initiator === user.username) 
+                chat.initiatorLastRead = chat.messages[chat.messages.length -1 ]._id;
+            else 
+                chat.reciepientLastRead = chat.messages[chat.messages.length -1 ]._id;
+        }
+
+        await chat.save();
+
         // #TODO encrypt all responses
         return res.json({
             partnerKey: partner.pubKey,
@@ -134,11 +143,8 @@ module.exports.createNewMessage = async (req, res, next) => {
     try {
         const user = req.user;
         const chat = await Chats.findById(req.params.chatid);
-        const recieverUsername = (chat.reciepient === user._id) ? chat.initiator : chat.reciepient;
-        const receiver = await Users.findOne({username: recieverUsername});
         const newMessage = {
-            sender: user._id,
-            receiver: receiver._id,
+            sender: user.username,
             senderMessage: req.body.senderMessage,
             recieverMessage: req.body.recieverMessage,
             time: Date.now()

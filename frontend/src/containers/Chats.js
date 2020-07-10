@@ -46,7 +46,7 @@ function Chats({
     
     useEffect(() => {
         if (!!chatID) {
-            fetchConversation(chatID, currentUser.user._id)
+            fetchConversation(chatID, currentUser.user.username)
             .catch(()=> {});
         } else {
             setConversation(null);
