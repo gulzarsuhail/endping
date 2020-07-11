@@ -65,31 +65,4 @@ chatSchema.pre("remove", async function(next){
     }
 });
 
-
-// #TODO: only 20 messages are to be stored
-chatSchema.pre("save", async function(next){
-    try {
-        if (this.messages.length > 20) {
-            let initiatorFlag = false;
-            let receipientFlag = false;
-            for (let i = this.messages.length - 20; i < this.messages.length - 1; i++){
-                if (this.initiatorLastRead.equals(this.messages[i]._id))
-                    initiatorFlag = true;
-                if (this.reciepientLastRead.equals(this.messages[i]._id))
-                    receipientFlag = true;
-            }
-            if (initiatorFlag && receipientFlag) {        
-                this.messages.remove(this.messages.slice(0, this.messages.length - 20));
-                return next();
-            } else {
-                throw Error("Cannot sent more messages until other participant has read the previous messages");
-            }
-        } else {
-            next();
-        }
-    } catch (err) {
-        return next(err);
-    }
-})
-
 module.exports = mongoose.model("Chats", chatSchema);

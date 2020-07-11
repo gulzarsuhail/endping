@@ -143,6 +143,19 @@ module.exports.createNewMessage = async (req, res, next) => {
     try {
         const user = req.user;
         const chat = await Chats.findById(req.params.chatid);
+        const userIsInitiator = (chat.initiator === user.username);
+        // #TODO: reduce complexity to const instead of n
+        if (chat.messages.length >= 20) {
+            let partnerReadFlag = false;
+            for (let i= chat.messages.length - 1 ; i >= chat.messages.length - 20 ; i--)
+                if (userIsInitiator && chat.messages[i]._id.equals(chat.reciepientLastRead))
+                    partnerReadFlag = true;
+                else if (!userIsInitiator && chat.messages[i]._id.equals(chat.initiatorLastRead))    
+                    partnerReadFlag = true;     
+            if (partnerReadFlag) chat.messages.slice(0, chat.messages.length - 20 +1).forEach(e => chat.messages.remove(e._id));
+            else throw Error ("Cannot sent more messages until other participant has read the previous messages");       
+        }
+        console.log(chat.messages.slice(0, chat.messages.length - 20 +1).map(e => e._id))
         const newMessage = {
             sender: user.username,
             senderMessage: req.body.senderMessage,
